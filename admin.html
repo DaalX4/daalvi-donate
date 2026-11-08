@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="robots" content="noindex,nofollow">
+<title>ویرایش صفحه حمایت</title>
+<style>
+@font-face { font-family: 'Vazirmatn'; src: url('fonts/Vazirmatn-Variable.ttf') format('truetype'); font-weight: 100 900; }
+:root { --paper:#f4ead6; --ink:#10231a; --mute:#5a6657; --line:rgba(16,35,26,.18); --sage:#86a077; }
+* { box-sizing: border-box; }
+body { margin:0; background:var(--paper); color:var(--ink); font:400 1rem/1.8 'Vazirmatn',Tahoma,sans-serif; }
+main { max-width:46rem; margin:0 auto; padding:1.5rem 1.25rem 7rem; }
+h1 { font-size:1.4rem; margin:.5rem 0 1.5rem; }
+fieldset { border:1px solid var(--line); border-radius:10px; margin:0 0 1.25rem; padding:1rem 1.1rem 1.2rem; background:rgba(255,255,255,.35); }
+legend { padding:0 .5rem; font-weight:700; }
+label { display:block; font-size:.9rem; color:var(--mute); margin:.7rem 0 .15rem; }
+input[type=text], input[type=url], input[type=number], input[type=password], textarea { width:100%; font:inherit; color:var(--ink); background:#fffdf8; border:1px solid var(--line); border-radius:8px; padding:.5rem .7rem; }
+textarea { min-height:9rem; line-height:1.9; resize:vertical; }
+input[dir=ltr] { direction:ltr; text-align:left; }
+.row { display:grid; grid-template-columns:1fr 1fr; gap:.75rem; } .row3 { display:grid; grid-template-columns:1fr 2fr auto; gap:.6rem; align-items:end; }
+.chk { display:flex; align-items:center; gap:.4rem; font-size:.9rem; color:var(--ink); margin:0; padding:.5rem 0; }
+.hint { font-size:.82rem; color:var(--mute); margin:.2rem 0 0; }
+.bar { position:fixed; inset:auto 0 0 0; background:var(--paper); border-top:1px solid var(--line); padding:.8rem 1.25rem; display:flex; gap:.8rem; align-items:center; justify-content:center; }
+button { font:inherit; font-weight:600; background:var(--ink); color:var(--paper); border:0; border-radius:8px; padding:.55rem 1.6rem; cursor:pointer; }
+button:disabled { opacity:.5; cursor:wait; }
+#msg { min-height:1.6em; font-size:.92rem; } .ok { color:#2c6b3a; } .err { color:#a3302b; }
+:focus-visible { outline:2px solid var(--ink); outline-offset:2px; }
+@media (max-width:34rem){ .row, .row3 { grid-template-columns:1fr; } }
+</style>
+</head>
+<body>
+<main>
+  <h1>ویرایش صفحه حمایت</h1>
+
+  <fieldset><legend>رمز</legend>
+    <label for="pw">رمز ویرایش (فقط هنگام ذخیره بررسی می‌شود)</label>
+    <input id="pw" type="password" autocomplete="current-password" dir="ltr">
+  </fieldset>
+
+  <fieldset><legend>هدف</legend>
+    <label for="goalTitle">عنوان هدف</label><input id="goalTitle" type="text">
+    <label class="chk"><input id="progEnabled" type="checkbox"> نمایش درصد پیشرفت در صفحه</label>
+    <div class="row">
+      <div><label for="raised">مبلغ جمع‌شده (تومان)</label><input id="raised" type="number" min="0" step="1" dir="ltr"></div>
+      <div><label for="target">مبلغ هدف (تومان)</label><input id="target" type="number" min="1" step="1" dir="ltr"></div>
+    </div>
+    <p class="hint" id="pctHint"></p>
+  </fieldset>
+
+  <div id="sections"></div>
+
+  <fieldset><legend>لینک‌های حمایت</legend><div id="donate"></div>
+    <p class="hint">برای نمایش یک گزینه، تیک «نمایش» را بزنید. گزینهٔ خالیِ آخر برای روش‌های بعدی (مثلاً کریپتو) آماده است.</p></fieldset>
+
+  <fieldset><legend>پایین صفحه</legend>
+    <div class="row">
+      <div><label for="sig">امضا</label><input id="sig" type="text" dir="ltr"></div>
+      <div><label for="homeLabel">نام آدرس سایت</label><input id="homeLabel" type="text" dir="ltr"></div>
+    </div>
+    <label for="homeHref">لینک امضا</label><input id="homeHref" type="text" dir="ltr">
+    <div id="flinks"></div>
+  </fieldset>
+</main>
+
+<div class="bar"><button id="save" type="button">ذخیره تغییرات</button><span id="msg" role="status" aria-live="polite"></span></div>
+
+<script src="content.js"></script>
+<script>
+(function () {
+  'use strict';
+  var D = window.DONATE_CONTENT, $ = function (i) { return document.getElementById(i); };
+  var URL_ = D.remote.url, cur = JSON.parse(JSON.stringify(D));
+  function merge(b, o) { if (o == null) return b; if (Array.isArray(b)) return Array.isArray(o) ? o : b; if (b && typeof b === 'object') { var r = {}; Object.keys(b).forEach(function (k) { r[k] = merge(b[k], o[k]); }); return r; } return typeof o === typeof b ? o : b; }
+  function msg(t, c) { $('msg').textContent = t; $('msg').className = c || ''; }
+  function h(tag, attrs, html) { var e = document.createElement(tag); Object.keys(attrs || {}).forEach(function (k) { e.setAttribute(k, attrs[k]); }); if (html) e.innerHTML = html; return e; }
+  function field(label, cls, val, ltr, type) { var w = h('div'); var l = h('label'); l.textContent = label; var i = h('input', { type: type || 'text', 'data-k': cls }); if (ltr) i.setAttribute('dir', 'ltr'); i.value = val || ''; w.appendChild(l); w.appendChild(i); return w; }
+  function chk(cls, on, text) { var l = h('label', { 'class': 'chk' }); var i = h('input', { type: 'checkbox', 'data-k': cls }); i.checked = !!on; l.appendChild(i); l.appendChild(document.createTextNode(' ' + text)); return l; }
+
+  function pct() { var r = +$('raised').value || 0, t = +$('target').value || 0; $('pctHint').textContent = t > 0 ? 'درصد نمایش‌داده‌شده: ' + (Math.round(r / t * 1000) / 10).toLocaleString('fa-IR') + '٪' : ''; }
+  function fill(c) {
+    $('goalTitle').value = c.goal.title; $('progEnabled').checked = !!c.progress.enabled; $('raised').value = c.progress.raised; $('target').value = c.progress.target; pct();
+    var s = $('sections'); s.innerHTML = '';
+    c.sections.forEach(function (sec, i) {
+      var f = h('fieldset'); f.appendChild(h('legend', {}, 'متن ' + (i + 1)));
+      var l1 = h('label', { 'for': 'sh' + i }); l1.textContent = 'تیتر'; var t = h('input', { type: 'text', id: 'sh' + i, 'class': 'sh' }); t.value = sec.heading;
+      var l2 = h('label', { 'for': 'sp' + i }); l2.textContent = 'متن'; var a = h('textarea', { id: 'sp' + i, 'class': 'sp' }); a.value = sec.paragraphs.join('\n\n');
+      f.appendChild(l1); f.appendChild(t); f.appendChild(l2); f.appendChild(a); f.appendChild(h('p', { 'class': 'hint' }, 'بین هر پاراگراف یک خط خالی بگذارید.')); s.appendChild(f);
+    });
+    var d = $('donate'); d.innerHTML = '';
+    c.donate.forEach(function (x, i) {
+      var r = h('div', { 'class': 'row3', 'data-id': x.id, 'data-tone': x.tone, 'data-newtab': x.newTab ? '1' : '' });
+      r.appendChild(field('عنوان', 'label', x.label)); r.appendChild(field('لینک', 'href', x.href, true)); r.appendChild(chk('enabled', x.enabled, 'نمایش')); d.appendChild(r);
+    });
+    var fl = $('flinks'); fl.innerHTML = '';
+    c.footer.links.forEach(function (x) { var r = h('div', { 'class': 'row3' }); r.appendChild(field('نام', 'label', x.label, true)); r.appendChild(field('لینک', 'href', x.href, true)); r.appendChild(chk('enabled', x.enabled, 'نمایش')); fl.appendChild(r); });
+    $('sig').value = c.footer.signature; $('homeLabel').value = c.footer.home.label; $('homeHref').value = c.footer.home.href;
+  }
+  function rows(box) { return [].map.call(box.querySelectorAll('.row3'), function (r) { return r; }); }
+  function val(r, k) { return r.querySelector('[data-k=' + k + ']'); }
+  function collect() {
+    return {
+      goal: { title: $('goalTitle').value.trim() },
+      progress: { enabled: $('progEnabled').checked, mode: 'manual', raised: Math.max(0, +$('raised').value || 0), target: Math.max(1, +$('target').value || 1), endpoint: cur.progress.endpoint, refreshSeconds: cur.progress.refreshSeconds },
+      sections: [].map.call(document.querySelectorAll('#sections fieldset'), function (f) {
+        return { heading: f.querySelector('.sh').value.trim(), paragraphs: f.querySelector('.sp').value.split(/\n\s*\n/).map(function (p) { return p.replace(/\s*\n\s*/g, ' ').trim(); }).filter(Boolean) };
+      }),
+      donate: rows($('donate')).map(function (r) { return { id: r.dataset.id, label: val(r, 'label').value.trim(), href: val(r, 'href').value.trim(), tone: r.dataset.tone, enabled: val(r, 'enabled').checked, newTab: !!r.dataset.newtab }; }),
+      footer: { signature: $('sig').value.trim(), home: { label: $('homeLabel').value.trim(), href: $('homeHref').value.trim() },
+        links: rows($('flinks')).map(function (r) { return { label: val(r, 'label').value.trim(), href: val(r, 'href').value.trim(), enabled: val(r, 'enabled').checked }; }) }
+    };
+  }
+  $('raised').addEventListener('input', pct); $('target').addEventListener('input', pct);
+
+  fetch(URL_, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) { cur = merge(D, j && j.config); fill(cur); msg('تنظیمات فعلی بارگذاری شد.', 'ok'); })
+    .catch(function () { fill(cur); msg('اتصال به سرور برقرار نشد؛ مقادیر پیش‌فرض نمایش داده شد.', 'err'); });
+
+  $('save').addEventListener('click', function () {
+    var pw = $('pw').value; if (!pw) { msg('رمز را وارد کنید.', 'err'); $('pw').focus(); return; }
+    var b = $('save'); b.disabled = true; msg('در حال ذخیره…');
+    fetch(URL_, { method: 'POST', headers: { 'Content-Type': 'text/plain;charset=UTF-8' }, body: JSON.stringify({ password: pw, config: collect() }) })
+      .then(function (r) { return r.json().catch(function () { return {}; }).then(function (j) { return { s: r.status, j: j }; }); })
+      .then(function (x) { if (x.s === 200 && x.j.ok) msg('ذخیره شد. صفحه عمومی با بارگذاری بعدی به‌روز می‌شود.', 'ok'); else if (x.s === 401) msg('رمز اشتباه است.', 'err'); else msg(x.j.error || 'خطا در ذخیره.', 'err'); })
+      .catch(function () { msg('اتصال برقرار نشد.', 'err'); }).then(function () { b.disabled = false; });
+  });
+})();
+</script>
+</body>
+</html>
