@@ -18,7 +18,7 @@ window.DONATE_CONTENT = {
     mode: 'manual',            /* 'manual' = raised / target typed in the admin panel (default, safe for the public site); 'hub' = read the local streaming hub */
     raised: 0,
     target: 50000000,
-    endpoint: 'http://127.0.0.1:7790/api/ledger',
+    endpoint: '',
     refreshSeconds: 120
   },
 
