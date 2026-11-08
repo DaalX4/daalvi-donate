@@ -158,7 +158,7 @@ html.foot-bar .foot__links { gap: 0 1.1rem; }
 .nojs { text-align: center; padding: 2rem; }
 
 /* ---------- mobile / narrow: goal and links first, then the stories ---------- */
-@media (max-width: 62rem) {
+@media (max-width: 60rem) {
   .layout { grid-template-columns: minmax(0, 1fr); padding-top: .5rem; }
   .goalcol__inner { position: static; padding: clamp(1.5rem, 5vh, 3rem) 0 0; }
   .vline { height: 14px; margin: clamp(2.5rem, 7vh, 4rem) auto 0; width: min(14rem, 55%);
