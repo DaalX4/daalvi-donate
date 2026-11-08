@@ -59,30 +59,26 @@
   });
   if (ul.children.length) foot.appendChild(ul);
 
-  /* ---- hand-drawn oval: seeded wobble, two pencil passes + sage progress stroke on the same path ---- */
-  function rng(seed) { return function () { seed = (seed * 16807) % 2147483647; return (seed - 1) / 2147483646; }; }
-  function ovalPath(seed, wob, rot) {
-    var r = rng(seed), n = 14, pts = [], cx = 210, cy = 105, rx = 188, ry = 84;
-    var start = -Math.PI / 2 + rot;                 // starts at the top; the sage stroke grows from there
-    for (var i = 0; i < n; i++) {
-      var a = start + (i / n) * Math.PI * 2 * 1.0;
-      var k = 1 + (r() - .5) * wob;
-      pts.push([cx + Math.cos(a) * rx * k, cy + Math.sin(a) * ry * k * 1.02]);
-    }
-    // close with a small overshoot so it reads as a pencil loop
-    var a2 = start + Math.PI * 2 + .12, k2 = 1 + (r() - .5) * wob;
-    pts.push([cx + Math.cos(a2) * rx * k2 * 1.01, cy + Math.sin(a2) * ry * k2]);
-    // Catmull-Rom -> cubic bezier
-    var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
-    for (var j = 0; j < pts.length - 1; j++) {
-      var p0 = pts[Math.max(j - 1, 0)], p1 = pts[j], p2 = pts[j + 1], p3 = pts[Math.min(j + 2, pts.length - 1)];
-      d += 'C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + ' ' +
-        (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
-    }
-    return d;
+  /* ---- hand-drawn oval: the SAME boiling-lines logic as the streaming Donation Goal widget (goal-model.js is an unmodified copy):
+     a set of separately drawn pencil ovals played frame by frame (the line's shape differs in every frame; nothing is rotated or scaled), plus a faint second pass.
+     The percentage stays still; only the lines are redrawn. Settings = widget defaults (goal.config.json "boil"). ---- */
+  var M = window.GoalModel, BOIL = { frames: 10, fps: 10, intensity: 1.25, secondPass: true, seed: 7 };
+  var OV = { cx: 210, cy: 105, rx: 188, ry: 84 };                    // same oval as before (viewBox 420 x 210)
+  var frames = M.boilFrames({ count: BOIL.frames, seed: BOIL.seed, intensity: BOIL.intensity }), boilIdx = 0, lastBoil = -1e9;
+  var elA = $('ovalPencilA'), elB = $('ovalPencilB'), elP = $('ovalProgress');
+  var still = window.matchMedia && matchMedia('(prefers-reduced-motion: reduce)').matches;
+  function drawOval() {
+    var f = frames[boilIdx], g = frames[(boilIdx + Math.ceil(frames.length / 2)) % frames.length];
+    elA.setAttribute('d', M.boilPath(f, OV)); elA.style.strokeWidth = (1.7 * f.width / 2.45).toFixed(2);   // the pen line is a little thicker or thinner in every drawing, as in the widget
+    if (BOIL.secondPass) elB.setAttribute('d', M.boilPath(g, { cx: OV.cx, cy: OV.cy, rx: OV.rx * 0.985, ry: OV.ry * 0.985 }));
   }
-  var dA = ovalPath(11, .07, 0), dB = ovalPath(29, .09, .05);
-  $('ovalPencilA').setAttribute('d', dA); $('ovalPencilB').setAttribute('d', dB); $('ovalProgress').setAttribute('d', dA);
+  var dBase = M.boilPath(frames[0], OV); elP.setAttribute('d', dBase);   // the sage progress stroke rides on a fixed base drawing
+  drawOval();
+  function boilLoop(now) {
+    if (now - lastBoil >= 1000 / BOIL.fps) { lastBoil = now; boilIdx = (boilIdx + 1) % frames.length; drawOval(); }
+    requestAnimationFrame(boilLoop);
+  }
+  if (!still) requestAnimationFrame(boilLoop);
 
   /* ---- progress ---- */
   var oval = $('goalOval'), pctEl = $('goalPct'), prog = $('ovalProgress');
