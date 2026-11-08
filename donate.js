@@ -38,12 +38,20 @@
     sec.appendChild(h); sec.appendChild(body); story.appendChild(sec);
   });
 
-  /* ---- donation options (data-driven) ---- */
+  /* ---- donation options (data-driven). Minimal hand-drawn line icons, chosen by item.icon (or item.id): usd = coin, toman = banknote, crypto = gem. A new option only needs a new entry in content.js. ---- */
+  var ICONS = {
+    usd: '<svg viewBox="0 0 24 24" focusable="false"><path d="M12 3.3c4.8 0 8.6 3.9 8.5 8.6-.1 4.8-3.9 8.7-8.6 8.6-4.8-.1-8.7-3.8-8.6-8.6.1-4.7 3.9-8.6 8.7-8.6z"/><path d="M14.5 9.2c-.4-.9-1.3-1.5-2.5-1.5-1.4 0-2.3.8-2.3 1.8 0 2.4 4.7 1.3 4.7 3.7 0 1-.9 1.9-2.4 1.9-1.2 0-2.2-.6-2.6-1.6M12 6.2v1.5M12 16.2v1.6"/></svg>',
+    toman: '<svg viewBox="0 0 24 24" focusable="false"><path d="M3.4 7.3c5-.6 12.2-.6 17.2-.1.3 3.2.3 6.4 0 9.6-5 .6-12.2.6-17.2.1-.3-3.2-.3-6.4 0-9.6z"/><path d="M12 9.3c1.5 0 2.5 1 2.5 2.7s-1 2.7-2.5 2.7-2.5-1-2.5-2.7 1-2.7 2.5-2.7z"/><path d="M6.2 10.2v.1M17.8 13.8v.1"/></svg>',
+    crypto: '<svg viewBox="0 0 24 24" focusable="false"><path d="M12 3.4l7.4 4.3v8.6L12 20.6l-7.4-4.3V7.7z"/><path d="M12 8.2l3.4 1.9v3.8L12 15.8l-3.4-1.9v-3.8z"/></svg>',
+    link: '<svg viewBox="0 0 24 24" focusable="false"><path d="M12 3.4c4.8 0 8.6 3.9 8.5 8.6-.1 4.8-3.9 8.6-8.6 8.6S3.3 16.8 3.4 12c.1-4.7 3.9-8.6 8.6-8.6z"/><path d="M8.5 12h7M12.5 9l3 3-3 3"/></svg>'
+  };
+
   var nav = $('support'), list = el('ul', 'support__list');
   C.donate.filter(function (d) { return d.enabled && safeHref(d.href) && d.label; }).forEach(function (d) {
     var li = el('li'), a = el('a', 'support__link tone-' + (d.tone || 'ink'));
-    a.href = safeHref(d.href); a.appendChild(el('span', 'support__label', d.label));
-    a.insertAdjacentHTML('beforeend', '<svg class="support__arrow" viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 17 17 7M8.5 7H17v8.5"/></svg>');
+    a.href = safeHref(d.href);
+    var ic = el('span', 'support__icon'); ic.setAttribute('aria-hidden', 'true'); ic.innerHTML = ICONS[d.icon || d.id] || ICONS.link; a.appendChild(ic);
+    a.appendChild(el('span', 'support__label', d.label));
     if (d.newTab) { a.target = '_blank'; a.rel = 'noopener noreferrer'; }
     li.appendChild(a); list.appendChild(li);
   });
@@ -57,14 +65,63 @@
   (C.nav || []).filter(function (l) { return l.label && siteHref(l.href); }).forEach(function (l) { var li = el('li'); li.appendChild(linkEl(l, false)); nul.appendChild(li); });
   navBox.appendChild(nul);
 
-  var foot = $('foot'), f = C.footer;
-  var sig = linkEl({ label: f.signature, href: f.home.href || SITE }, false); sig.className = 'foot__sig'; sig.setAttribute('aria-label', f.home.label);
-  foot.appendChild(sig);
+  /* ---- one compact footer: reach-out on one side, socials + signature on the other. ?footer=bar turns it into a slim fixed bar (preview only). ---- */
+  var foot = $('foot'), f = C.footer, R = C.reach || {};
+  if (/[?&]footer=bar\b/.test(location.search)) document.documentElement.classList.add('foot-bar');
+  var reach = el('div', 'foot__col foot__reach');
+  if (R.email) {
+    var hl = el('a', 'foot__h', R.heading || ''); hl.href = 'mailto:' + R.email; reach.appendChild(hl);
+    var ml = el('a', 'foot__mail', R.email); ml.href = 'mailto:' + R.email; reach.appendChild(ml);
+  }
+  var meta = el('div', 'foot__col foot__meta');
   var ul = el('ul', 'foot__links');
   (f.links || []).concat(f.socials || []).filter(function (l) { return l.label && siteHref(l.href) && l.enabled !== false; }).forEach(function (l) { var li = el('li'); li.appendChild(linkEl(l, true)); ul.appendChild(li); });
-  if (ul.children.length) foot.appendChild(ul);
-  var legal = el('p', 'foot__legal'); (f.legal || []).forEach(function (t, i) { if (i) legal.appendChild(document.createElement('br')); legal.appendChild(document.createTextNode(t)); });
-  if (legal.firstChild) foot.appendChild(legal);
+  if (ul.children.length) meta.appendChild(ul);
+  var legal = el('p', 'foot__legal'); legal.appendChild(el('span', 'foot__sig', f.signature || 'DAALVI'));
+  (f.legal || []).forEach(function (t) { legal.appendChild(el('span', 'foot__dot', '·')); legal.appendChild(el('span', null, t)); });
+  meta.appendChild(legal);
+  foot.appendChild(reach); foot.appendChild(meta);
+
+
+  /* ---- top supporters: empty state, three small outlined slots (no names, no amounts) ---- */
+  (function () {
+    var S = C.supporters || {}, box = $('supporters'); if (!box) return;
+    var FA = ['۱', '۲', '۳', '۴', '۵'], n = Math.max(1, Math.min(5, S.slots || 3));
+    box.appendChild(el('h2', 'sup__h', S.heading || '')).id = 'supH';
+    var ol = el('ol', 'slots');
+    for (var i = 0; i < n; i++) { var li = el('li', 'slot'); li.innerHTML = ('<span class="slot__n">' + FA[i] + '</span><span class="slot__line" aria-hidden="true"></span>' + (i === 0 ? '<svg class="slot__crown" viewBox="0 0 40 22" aria-hidden="true" focusable="false"><path d="M4 19c8 1.2 24 1.2 32 0M5 18.5L3.6 6.5l8.8 6.6L20 3l7.6 10.1 8.8-6.6L35 18.5"/></svg>' : '')); ol.appendChild(li); }
+    box.appendChild(ol);
+    if (S.note) box.appendChild(el('p', 'sup__note', S.note));
+  })();
+
+  /* ---- hand-drawn outlines for the donation links (drawn in real pixels, so the pen line never stretches) ---- */
+  function rng2(seed) { var a = seed >>> 0; return function () { a = (a + 0x6D2B79F5) | 0; var t = Math.imul(a ^ (a >>> 15), 1 | a); t = (t + Math.imul(t ^ (t >>> 7), 61 | t)) ^ t; return ((t ^ (t >>> 14)) >>> 0) / 4294967296; }; }
+  function handBox(w, h, r, seed, jit) {
+    var R = rng2(seed), pts = [], n = 6;
+    function side(x0, y0, x1, y1) { for (var i = 0; i < n; i++) { var u = i / n; pts.push([x0 + (x1 - x0) * u + (R() - .5) * jit, y0 + (y1 - y0) * u + (R() - .5) * jit]); } }
+    side(r, 0, w - r, 0); pts.push([w - r * .3, r * .08], [w, r * .5]);
+    side(w, r, w, h - r); pts.push([w - r * .08, h - r * .3], [w - r * .5, h]);
+    side(w - r, h, r, h); pts.push([r * .3, h - r * .08], [0, h - r * .5]);
+    side(0, h - r, 0, r); pts.push([r * .08, r * .3], [r * .5, 0], [r + (R() - .5) * 3, (R() - .5) * 2]);
+    var d = 'M' + pts[0][0].toFixed(1) + ' ' + pts[0][1].toFixed(1);
+    for (var i = 0; i < pts.length - 1; i++) {
+      var p0 = pts[Math.max(0, i - 1)], p1 = pts[i], p2 = pts[i + 1], p3 = pts[Math.min(pts.length - 1, i + 2)];
+      d += 'C' + (p1[0] + (p2[0] - p0[0]) / 6).toFixed(1) + ' ' + (p1[1] + (p2[1] - p0[1]) / 6).toFixed(1) + ' ' + (p2[0] - (p3[0] - p1[0]) / 6).toFixed(1) + ' ' + (p2[1] - (p3[1] - p1[1]) / 6).toFixed(1) + ' ' + p2[0].toFixed(1) + ' ' + p2[1].toFixed(1);
+    }
+    return d;
+  }
+  function drawOutlines() {
+    document.querySelectorAll('.support__link, .slot').forEach(function (a, i) {
+      var b = a.getBoundingClientRect(), w = Math.round(b.width), h = Math.round(b.height); if (!w) return;
+      var s = a.querySelector('svg.hd');
+      if (!s) { a.insertAdjacentHTML('afterbegin', '<svg class="hd" aria-hidden="true" focusable="false"><path class="b"/><path class="a"/></svg>'); s = a.querySelector('svg.hd'); }
+      s.setAttribute('viewBox', '0 0 ' + w + ' ' + h); s.setAttribute('width', w); s.setAttribute('height', h);
+      s.querySelector('.a').setAttribute('d', handBox(w, h, 6, 31 + i * 7, 1.8));
+      s.querySelector('.b').setAttribute('d', handBox(w - 3, h - 3, 6, 77 + i * 5, 2.4));
+    });
+  }
+  (document.fonts && document.fonts.ready ? document.fonts.ready : Promise.resolve()).then(function () { drawOutlines(); setTimeout(drawOutlines, 350); });
+  window.addEventListener('resize', drawOutlines);
 
   /* ---- hand-drawn oval: the SAME boiling-lines logic as the streaming Donation Goal widget (goal-model.js is an unmodified copy):
      a set of separately drawn pencil ovals played frame by frame (the line's shape differs in every frame; nothing is rotated or scaled), plus a faint second pass.

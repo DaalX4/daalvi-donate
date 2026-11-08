@@ -50,10 +50,10 @@ window.DONATE_CONTENT = {
   /* 4 — donation options. Data-driven: to add one later (e.g. crypto) add an item here. `enabled:false` keeps it hidden.
      Order here = order on the page. `tone` only picks the colour of the pencil underline (sage | kraft | ink). */
   donate: [
-    { id: 'usd',  label: 'حمایت دلاری',  href: 'https://ko-fi.com/daalvi',    tone: 'sage',  enabled: true,  newTab: true },
-    { id: 'toman', label: 'حمایت تومانی', href: 'https://donofa.com/daalvi', tone: 'kraft', enabled: true,  newTab: true },
+    { id: 'usd',  icon: 'usd', label: 'حمایت دلاری',  href: 'https://ko-fi.com/daalvi',    tone: 'sage',  enabled: true,  newTab: true },
+    { id: 'toman', icon: 'toman', label: 'حمایت تومانی', href: 'https://donofa.com/daalvi', tone: 'kraft', enabled: true,  newTab: true },
     /* crypto slot — prepared, NOT shown. Fill in label/href and set enabled:true when it exists. */
-    { id: 'crypto', label: '', href: '', tone: 'ink', enabled: false, newTab: true }
+    { id: 'crypto', icon: 'crypto', label: '', href: '', tone: 'ink', enabled: false, newTab: true }
   ],
 
   /* Site menu shown at the top (same destinations as the daalvi.com menu; opens in the same tab). */
@@ -65,14 +65,19 @@ window.DONATE_CONTENT = {
     { label: 'FARSI', href: 'https://www.daalvi.com/farsi' }
   ],
 
+  /* Top supporters: empty state for now (no names, no amounts). Not connected to any donation data yet. */
+  supporters: { heading: 'برترین حامیان', note: 'هنوز حامی برتری ثبت نشده است.', slots: 3 },
+
+  /* Contact & collaboration (very short block above the footer). */
+  reach: { heading: 'ارتباط و همکاری', email: 'aboutdaalvi@gmail.com' },
+
   /* 5 — footer. Only entries with enabled:true and a real href are drawn. Add the other handles when confirmed. */
   footer: {
     signature: 'DAALVI',
     home: { label: 'daalvi.com', href: 'https://www.daalvi.com' },
     socials: [   /* same social links as the main website footer (LinkedIn is not live there yet, so it is left out) */
       { label: 'Instagram', href: 'https://www.instagram.com/aboutdaalvi/' },
-      { label: 'YouTube', href: 'https://www.youtube.com/c/Daalvi' },
-      { label: 'Facebook', href: 'https://www.facebook.com/aboutdaalvi/' }
+      { label: 'YouTube', href: 'https://www.youtube.com/c/Daalvi' }
     ],
     legal: ['Vancouver, BC', '© 2024 Daalvi. All rights reserved.'],
     links: [
