@@ -125,7 +125,7 @@ svg.hd path.b { stroke-width: .9; stroke-opacity: .28; }
 .foot__sig:hover, .foot__sig:focus-visible { opacity: 1; border-bottom-color: currentColor; }
 .foot__col { display: flex; flex-direction: column; gap: .05rem; min-width: 0; }
 .foot__reach { align-items: flex-start; }                 /* RTL: sits on the right, under the goal column */
-.foot__meta { align-items: flex-end; text-align: left; direction: ltr; }
+.foot__meta { align-items: flex-start; text-align: left; direction: ltr; }
 .foot__h { font-family: var(--f-display); font-size: 1.12rem; line-height: 1.5; color: var(--ink); text-decoration: none; -webkit-text-stroke: .01em currentColor; }
 .foot__mail { font-size: .88rem; line-height: 1.6; letter-spacing: .04em; color: var(--ink-soft); text-decoration: none; direction: ltr; border-bottom: 1px solid transparent; align-self: flex-start; transition: color .3s, border-color .3s; }
 .foot__h:hover, .foot__h:focus-visible { text-decoration: underline; text-underline-offset: 4px; text-decoration-thickness: 1px; }
