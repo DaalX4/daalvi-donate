@@ -56,10 +56,25 @@ window.DONATE_CONTENT = {
     { id: 'crypto', label: '', href: '', tone: 'ink', enabled: false, newTab: true }
   ],
 
+  /* Site menu shown at the top (same destinations as the daalvi.com menu; opens in the same tab). */
+  nav: [
+    { label: 'HOME', href: 'https://www.daalvi.com' },
+    { label: 'PORTFOLIO', href: 'https://www.daalvi.com/portfolio' },
+    { label: 'CONTACT', href: 'https://www.daalvi.com/contact' },
+    { label: 'ABOUT', href: 'https://www.daalvi.com/about' },
+    { label: 'FARSI', href: 'https://www.daalvi.com/farsi' }
+  ],
+
   /* 5 — footer. Only entries with enabled:true and a real href are drawn. Add the other handles when confirmed. */
   footer: {
     signature: 'DAALVI',
-    home: { label: 'daalvi.com', href: '/' },
+    home: { label: 'daalvi.com', href: 'https://www.daalvi.com' },
+    socials: [   /* same social links as the main website footer (LinkedIn is not live there yet, so it is left out) */
+      { label: 'Instagram', href: 'https://www.instagram.com/aboutdaalvi/' },
+      { label: 'YouTube', href: 'https://www.youtube.com/c/Daalvi' },
+      { label: 'Facebook', href: 'https://www.facebook.com/aboutdaalvi/' }
+    ],
+    legal: ['Vancouver, BC', '© 2024 Daalvi. All rights reserved.'],
     links: [
       { label: 'Kick', href: 'https://kick.com/daalvi', enabled: true },
       { label: 'Instagram', href: '', enabled: false },

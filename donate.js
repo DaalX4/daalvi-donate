@@ -49,15 +49,22 @@
   });
   nav.appendChild(list);
 
-  /* ---- footer ---- */
+  /* ---- site menu + footer (replace the Wix header/footer on this page; same destinations and social links as daalvi.com) ---- */
+  var SITE = 'https://www.daalvi.com';
+  function siteHref(h) { h = safeHref(h); return h.charAt(0) === '/' ? SITE + h : h; }       // links open from inside the embed, so a relative path must point at the main site
+  function linkEl(l, ext) { var a = el('a', null, l.label); a.href = siteHref(l.href); if (ext) { a.target = '_blank'; a.rel = 'noopener noreferrer'; } else a.target = '_top'; return a; }
+  var navBox = $('siteNav'), nul = el('ul', 'sitenav__list');
+  (C.nav || []).filter(function (l) { return l.label && siteHref(l.href); }).forEach(function (l) { var li = el('li'); li.appendChild(linkEl(l, false)); nul.appendChild(li); });
+  navBox.appendChild(nul);
+
   var foot = $('foot'), f = C.footer;
-  var sig = el('a', 'foot__sig', f.signature); sig.href = safeHref(f.home.href) || '/'; sig.setAttribute('aria-label', f.home.label); sig.target = '_top'; sig.target = '_top';
+  var sig = linkEl({ label: f.signature, href: f.home.href || SITE }, false); sig.className = 'foot__sig'; sig.setAttribute('aria-label', f.home.label);
   foot.appendChild(sig);
   var ul = el('ul', 'foot__links');
-  f.links.filter(function (l) { return l.enabled && safeHref(l.href); }).forEach(function (l) {
-    var li = el('li'), a = el('a', null, l.label); a.href = safeHref(l.href); a.target = '_blank'; a.rel = 'noopener noreferrer'; li.appendChild(a); ul.appendChild(li);
-  });
+  (f.links || []).concat(f.socials || []).filter(function (l) { return l.label && siteHref(l.href) && l.enabled !== false; }).forEach(function (l) { var li = el('li'); li.appendChild(linkEl(l, true)); ul.appendChild(li); });
   if (ul.children.length) foot.appendChild(ul);
+  var legal = el('p', 'foot__legal'); (f.legal || []).forEach(function (t, i) { if (i) legal.appendChild(document.createElement('br')); legal.appendChild(document.createTextNode(t)); });
+  if (legal.firstChild) foot.appendChild(legal);
 
   /* ---- hand-drawn oval: the SAME boiling-lines logic as the streaming Donation Goal widget (goal-model.js is an unmodified copy):
      a set of separately drawn pencil ovals played frame by frame (the line's shape differs in every frame; nothing is rotated or scaled), plus a faint second pass.
