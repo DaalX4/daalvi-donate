@@ -79,7 +79,8 @@ window.DONATE_CONTENT = {
       { label: 'Instagram', href: 'https://www.instagram.com/aboutdaalvi/' },
       { label: 'YouTube', href: 'https://www.youtube.com/c/Daalvi' }
     ],
-    legal: ['Vancouver, BC', '© 2024 Daalvi. All rights reserved.'],
+    brand: { label: 'DAALVI', href: 'https://daalvi.com/' },
+    copyright: '© 2025 DAALVI. All rights reserved.',
     links: [
       { label: 'Kick', href: 'https://kick.com/daalvi', enabled: true },
       { label: 'Instagram', href: '', enabled: false },

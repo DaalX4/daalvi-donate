@@ -117,9 +117,12 @@ svg.hd path.b { stroke-width: .9; stroke-opacity: .28; }
 .sec__body p { margin: 0 0 1.35em; text-wrap: pretty; hanging-punctuation: first; }
 .sec__body p:last-child { margin-bottom: 0; }
 
-/* ---------- footer: one compact line of two quiet columns ---------- */
-.foot { max-width: 78rem; margin: clamp(1.2rem, 4vh, 2.4rem) auto 0; width: calc(100% - 2 * var(--gutter)); border-top: 1px solid rgba(16,35,26,.14); padding: .85rem 0 1.05rem;
-  display: flex; align-items: center; justify-content: space-between; gap: .6rem 2rem; }
+/* ---------- footer (F4): brand on top, two columns, a tiny copyright line below ---------- */
+.foot { max-width: 78rem; margin: clamp(1.2rem, 4vh, 2.4rem) auto 0; width: calc(100% - 2 * var(--gutter)); border-top: 1px solid rgba(16,35,26,.14); padding: .55rem 0 1.05rem;
+  display: grid; grid-template-columns: 1fr 1fr; row-gap: .1rem; align-items: center; }
+.foot__brand { grid-column: 1 / -1; text-align: center; margin-bottom: .1rem; }
+.foot__sig { font-weight: 700; font-size: .8rem; letter-spacing: .34em; color: var(--ink); opacity: .85; text-decoration: none; display: inline-block; padding: .25rem .2rem; border-bottom: 1px solid transparent; direction: ltr; transition: opacity .3s, border-color .3s; }
+.foot__sig:hover, .foot__sig:focus-visible { opacity: 1; border-bottom-color: currentColor; }
 .foot__col { display: flex; flex-direction: column; gap: .05rem; min-width: 0; }
 .foot__reach { align-items: flex-start; }                 /* RTL: sits on the right, under the goal column */
 .foot__meta { align-items: flex-end; text-align: left; direction: ltr; }
@@ -130,30 +133,11 @@ svg.hd path.b { stroke-width: .9; stroke-opacity: .28; }
 .foot__links { list-style: none; margin: 0; padding: 0; display: flex; gap: 0 1.3rem; }
 .foot__links a { display: inline-block; padding: .15rem 0; min-height: 0; color: var(--ink-mute); letter-spacing: .1em; text-transform: none; font-size: .84rem; font-weight: 400; text-decoration: none; border-bottom: 1px solid transparent; }
 .foot__links a:hover, .foot__links a:focus-visible { color: var(--ink); border-bottom-color: currentColor; }
-.foot__legal { margin: 0; font-size: .74rem; line-height: 1.6; color: var(--ink-mute); display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 0 .4rem; }
-.foot__sig { font-weight: 700; letter-spacing: .26em; color: var(--ink); }
-.foot__dot { opacity: .5; }
+.foot__legal { grid-column: 1 / -1; margin: .35rem 0 0; padding-top: .45rem; border-top: 1px solid rgba(16,35,26,.08); text-align: center; font-size: .68rem; line-height: 1.6; letter-spacing: .02em; color: var(--ink-mute); opacity: .62; direction: ltr; }
 @media (max-width: 40rem) {        /* mobile: stacked and centred */
-  .foot { flex-direction: column; text-align: center; gap: .55rem; padding: .8rem 0 1rem; }
+  .foot { grid-template-columns: 1fr; row-gap: .45rem; text-align: center; }
   .foot__reach, .foot__meta { align-items: center; text-align: center; }
   .foot__mail { align-self: center; }
-  .foot__legal { justify-content: center; }
-}
-
-/* ---------- optional slim fixed bar (?footer=bar): label, email and socials only, no duplicated text ---------- */
-html.foot-bar body { padding-bottom: 3rem; }
-html.foot-bar .foot { position: fixed; inset: auto 0 0 0; z-index: 30; max-width: none; width: auto; margin: 0; padding: .4rem var(--gutter); border-top: 1px solid rgba(16,35,26,.16);
-  background: rgba(244,234,214,.95); -webkit-backdrop-filter: blur(7px); backdrop-filter: blur(7px); flex-direction: row; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: .1rem 1.4rem; }
-html.foot-bar .foot__reach { flex-direction: row; align-items: baseline; gap: .8rem; }
-html.foot-bar .foot__legal { display: none; }
-html.foot-bar .foot__h { font-size: 1rem; line-height: 1.5; }
-html.foot-bar .foot__mail, html.foot-bar .foot__links a { font-size: .8rem; }
-html.foot-bar .foot__links { gap: 0 1.1rem; }
-@media (max-width: 40rem) {
-  html.foot-bar body { padding-bottom: 4.6rem; }
-  html.foot-bar .foot { flex-direction: column; justify-content: center; gap: 0; text-align: center; padding: .35rem var(--gutter) .45rem; }
-  html.foot-bar .foot__reach { justify-content: center; flex-wrap: wrap; gap: 0 .7rem; }
-  html.foot-bar .foot__meta { align-items: center; }
 }
 .nojs { text-align: center; padding: 2rem; }
 

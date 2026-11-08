@@ -77,10 +77,10 @@
   var ul = el('ul', 'foot__links');
   (f.links || []).concat(f.socials || []).filter(function (l) { return l.label && siteHref(l.href) && l.enabled !== false; }).forEach(function (l) { var li = el('li'); li.appendChild(linkEl(l, true)); ul.appendChild(li); });
   if (ul.children.length) meta.appendChild(ul);
-  var legal = el('p', 'foot__legal'); legal.appendChild(el('span', 'foot__sig', f.signature || 'DAALVI'));
-  (f.legal || []).forEach(function (t) { legal.appendChild(el('span', 'foot__dot', '·')); legal.appendChild(el('span', null, t)); });
-  meta.appendChild(legal);
-  foot.appendChild(reach); foot.appendChild(meta);
+  var brand = el('div', 'foot__brand'), B = f.brand || { label: 'DAALVI', href: 'https://daalvi.com/' };
+  var bl = el('a', 'foot__sig', B.label); bl.href = B.href; bl.target = '_top'; brand.appendChild(bl);
+  var legal = el('p', 'foot__legal', f.copyright || '');
+  foot.appendChild(brand); foot.appendChild(reach); foot.appendChild(meta); if (f.copyright) foot.appendChild(legal);
 
 
   /* ---- top supporters: empty state, three small outlined slots (no names, no amounts) ---- */
