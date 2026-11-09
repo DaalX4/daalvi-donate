@@ -179,9 +179,13 @@
   /* entrance (E5): a short stagger down the page; the oval fades in at once (no delay); the icons get their own gentle scale-and-rise */
   var ENT = '.sitenav__list, .goal__title, .goal__rule, .goal__oval, .support__list li, .sep, .supporters, .sec__h, .sec__body p, .foot';
   [].slice.call(document.querySelectorAll(ENT)).forEach(function (n, i) { n.style.setProperty('--d', (n.classList.contains('goal__oval') ? 40 : Math.min(i * 45, 420)) + 'ms'); });
-  requestAnimationFrame(function () {
-    var r = document.documentElement; r.classList.add('ready');
-    if (r.classList.contains('ent-pre')) { r.classList.remove('ent-pre'); r.classList.add('ent-go'); }
-  });
+  function reveal() {
+    requestAnimationFrame(function () {
+      var r = document.documentElement; r.classList.add('ready');
+      if (r.classList.contains('ent-pre')) { r.classList.remove('ent-pre'); r.classList.add('ent-go'); }
+    });
+  }
+  var fontsIn = (document.fonts && document.fonts.load) ? Promise.all([document.fonts.load('1em DigiSarve'), document.fonts.load('400 1em Vazirmatn')]).catch(function () {}) : Promise.resolve();
+  Promise.race([fontsIn, new Promise(function (r) { setTimeout(r, 3500); })]).then(reveal);
   }
 })();

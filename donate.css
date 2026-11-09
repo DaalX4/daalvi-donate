@@ -160,10 +160,13 @@ html.ent-pre .goal__title, html.ent-pre .goal__oval, html.ent-pre .support__list
 html.ent-pre .goal__rule path, html.ent-pre .sep path:not(:nth-child(2)) { stroke-dasharray: 1; stroke-dashoffset: 1; }
 html.ent-pre .sep path:nth-child(2) { opacity: 0; transform: scale(.5); transform-box: fill-box; transform-origin: center; }
 html.ent-pre .support__icon { opacity: 0; }
+html:not(.ready) .vline, html:not(.ready) .sec + .sec::before { opacity: 0; }
 html.ent-go .goal__title, html.ent-go .goal__oval, html.ent-go .support__list li, html.ent-go .supporters, html.ent-go .sec__h, html.ent-go .sec__body p, html.ent-go .sitenav__list, html.ent-go .foot { animation: eFade .55s ease var(--d, 0ms) both; }
 html.ent-go .goal__rule path { stroke-dasharray: 1; animation: eDraw .9s cubic-bezier(.22,.7,.2,1) .25s both; }
 html.ent-go .sep path:not(:nth-child(2)) { stroke-dasharray: 1; animation: eDraw .8s cubic-bezier(.22,.7,.2,1) calc(var(--d, 0ms) + 100ms) both; }
 html.ent-go .sep path:nth-child(2) { transform-box: fill-box; transform-origin: center; animation: ePop .5s cubic-bezier(.3,1.4,.5,1) calc(var(--d, 0ms) + 550ms) both; }
+html.ent-go .vline { animation: eFade .6s ease .15s both; }
+html.ent-go .sec + .sec::before { animation: eFade .6s ease .3s both; }
 /* icons: a gentle rise with a small scale-up, slightly after their button; 'backwards' fill so the hover animation keeps working afterwards */
 html.ent-go .support__icon { animation: eIcon .7s cubic-bezier(.22,.7,.2,1) calc(var(--d, 0ms) + 160ms) backwards; }
 @media (prefers-reduced-motion: reduce) {
