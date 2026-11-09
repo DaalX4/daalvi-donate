@@ -63,11 +63,6 @@ a { color: inherit; }
 .goal__pct { position: relative; font-family: var(--f-display); color: var(--ink); direction: rtl; line-height: 1; font-size: clamp(3.8rem, 2rem + 4.6vw, 6.4rem); -webkit-text-stroke: .03em currentColor; padding-top: .08em; }
 .goal__sign { font-size: .62em; margin-inline-start: .08em; -webkit-text-stroke-width: .02em; }
 .goal__oval.is-empty::after { content: ''; position: absolute; inset: 0; margin: auto; height: 2px; width: 2.4rem; border-radius: 2px; background: var(--ink); opacity: .28; }
-.goal__oval { opacity: 0; }
-.ready .goal__oval { opacity: 1; transition: opacity 1.2s ease .15s; }
-.oval__pencil { stroke-dasharray: 100; stroke-dashoffset: 100; }
-.ready .oval__pencil { stroke-dashoffset: 0; transition: stroke-dashoffset 1.9s cubic-bezier(.45,.05,.25,1) .2s; }
-.ready .oval__pencil--b { transition-delay: .45s; }
 
 /* ---------- donation links: two elongated, softly hand-drawn rectangles; cream at rest, a muted green tint and a small lift on hover ---------- */
 .support { margin-top: clamp(2rem, 5.5vh, 3.2rem); }
@@ -152,7 +147,26 @@ svg.hd path.b { stroke-width: .9; stroke-opacity: .28; }
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { transition: none !important; animation: none !important; }
-  .goal__oval { opacity: 1; } .oval__pencil { stroke-dashoffset: 0; }
 }
 @media (forced-colors: active) { .support__link::after { background: LinkText; opacity: 1; } }
 @media (max-width: 26rem) { .sitenav__list { gap: .1rem .85rem; } .sitenav__list a { font-size: .78rem; letter-spacing: .1em; padding-inline: .1rem; } }
+
+/* ---------- entrance (E5): short, calm, opacity/transform only (no layout shift) ---------- */
+@keyframes eFade { from { opacity: 0; } to { opacity: 1; } }
+@keyframes eDraw { from { stroke-dashoffset: 1; } to { stroke-dashoffset: 0; } }
+@keyframes ePop { from { opacity: 0; transform: scale(.5) rotate(-20deg); } to { opacity: 1; transform: none; } }
+@keyframes eIcon { from { opacity: 0; transform: translateY(9px) scale(.78); } to { opacity: 1; transform: none; } }
+html.ent-pre .goal__title, html.ent-pre .goal__oval, html.ent-pre .support__list li, html.ent-pre .supporters, html.ent-pre .sec__h, html.ent-pre .sec__body p, html.ent-pre .sitenav__list, html.ent-pre .foot { opacity: 0; }
+html.ent-pre .goal__rule path, html.ent-pre .sep path:not(:nth-child(2)) { stroke-dasharray: 1; stroke-dashoffset: 1; }
+html.ent-pre .sep path:nth-child(2) { opacity: 0; transform: scale(.5); transform-box: fill-box; transform-origin: center; }
+html.ent-pre .support__icon { opacity: 0; }
+html.ent-go .goal__title, html.ent-go .goal__oval, html.ent-go .support__list li, html.ent-go .supporters, html.ent-go .sec__h, html.ent-go .sec__body p, html.ent-go .sitenav__list, html.ent-go .foot { animation: eFade .55s ease var(--d, 0ms) both; }
+html.ent-go .goal__rule path { stroke-dasharray: 1; animation: eDraw .9s cubic-bezier(.22,.7,.2,1) .25s both; }
+html.ent-go .sep path:not(:nth-child(2)) { stroke-dasharray: 1; animation: eDraw .8s cubic-bezier(.22,.7,.2,1) calc(var(--d, 0ms) + 100ms) both; }
+html.ent-go .sep path:nth-child(2) { transform-box: fill-box; transform-origin: center; animation: ePop .5s cubic-bezier(.3,1.4,.5,1) calc(var(--d, 0ms) + 550ms) both; }
+/* icons: a gentle rise with a small scale-up, slightly after their button; 'backwards' fill so the hover animation keeps working afterwards */
+html.ent-go .support__icon { animation: eIcon .7s cubic-bezier(.22,.7,.2,1) calc(var(--d, 0ms) + 160ms) backwards; }
+@media (prefers-reduced-motion: reduce) {
+  html.ent-pre .goal__title, html.ent-pre .goal__oval, html.ent-pre .support__list li, html.ent-pre .supporters, html.ent-pre .sec__h, html.ent-pre .sec__body p, html.ent-pre .sitenav__list, html.ent-pre .foot, html.ent-pre .support__icon { opacity: 1; }
+  html.ent-go * { animation: none !important; }
+}
