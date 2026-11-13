@@ -42,8 +42,8 @@ button:disabled { opacity:.5; cursor:wait; }
     <label for="goalTitle">عنوان هدف</label><input id="goalTitle" type="text">
     <label class="chk"><input id="progEnabled" type="checkbox"> نمایش درصد پیشرفت در صفحه</label>
     <div class="row">
-      <div><label for="raised">مبلغ جمع‌شده (تومان)</label><input id="raised" type="number" min="0" step="1" dir="ltr"></div>
-      <div><label for="target">مبلغ هدف (تومان)</label><input id="target" type="number" min="1" step="1" dir="ltr"></div>
+      <div><label for="raised">مبلغ جمع‌شده (تومان)</label><input id="raised" type="text" inputmode="numeric" autocomplete="off" data-money dir="ltr"></div>
+      <div><label for="target">مبلغ هدف (تومان)</label><input id="target" type="text" inputmode="numeric" autocomplete="off" data-money dir="ltr"></div>
     </div>
     <p class="hint" id="pctHint"></p>
   </fieldset>
@@ -77,9 +77,29 @@ button:disabled { opacity:.5; cursor:wait; }
   function field(label, cls, val, ltr, type) { var w = h('div'); var l = h('label'); l.textContent = label; var i = h('input', { type: type || 'text', 'data-k': cls }); if (ltr) i.setAttribute('dir', 'ltr'); i.value = val || ''; w.appendChild(l); w.appendChild(i); return w; }
   function chk(cls, on, text) { var l = h('label', { 'class': 'chk' }); var i = h('input', { type: 'checkbox', 'data-k': cls }); i.checked = !!on; l.appendChild(i); l.appendChild(document.createTextNode(' ' + text)); return l; }
 
-  function pct() { var r = +$('raised').value || 0, t = +$('target').value || 0; $('pctHint').textContent = t > 0 ? 'درصد نمایش‌داده‌شده: ' + (Math.round(r / t * 1000) / 10).toLocaleString('fa-IR') + '٪' : ''; }
+  // Money inputs are shown with thousands separators (1,100,000) but always read back as a plain integer.
+  // Persian/Arabic digits and pasted separators (, ، ٬ spaces) are accepted.
+  function num(v) {
+    var d = String(v == null ? '' : v)
+      .replace(/[۰-۹]/g, function (c) { return String(c.charCodeAt(0) - 0x06F0); })
+      .replace(/[٠-٩]/g, function (c) { return String(c.charCodeAt(0) - 0x0660); })
+      .replace(/\D/g, '');
+    return d ? parseInt(d, 10) : 0;
+  }
+  function fmt(n) { return String(Math.max(0, Math.round(+n || 0))).replace(/\B(?=(\d{3})+(?!\d))/g, ','); }
+  function moneyInput(el) {
+    el.addEventListener('input', function () {
+      var raw = String(el.value), caret = el.selectionStart == null ? raw.length : el.selectionStart;
+      var digitsBeforeCaret = num(raw.slice(0, caret)) === 0 && !/[0-9۰-۹٠-٩]/.test(raw.slice(0, caret)) ? 0 : raw.slice(0, caret).replace(/[^0-9۰-۹٠-٩]/g, '').length;
+      var has = /[0-9۰-۹٠-٩]/.test(raw);
+      el.value = has ? fmt(num(raw)) : '';
+      var pos = 0, seen = 0; while (pos < el.value.length && seen < digitsBeforeCaret) { if (/\d/.test(el.value.charAt(pos))) seen++; pos++; }
+      try { el.setSelectionRange(pos, pos); } catch (e) {}
+    });
+  }
+  function pct() { var r = num($('raised').value), t = num($('target').value); $('pctHint').textContent = t > 0 ? 'درصد نمایش‌داده‌شده: ' + (Math.round(r / t * 1000) / 10).toLocaleString('fa-IR') + '٪' : ''; }
   function fill(c) {
-    $('goalTitle').value = c.goal.title; $('progEnabled').checked = !!c.progress.enabled; $('raised').value = c.progress.raised; $('target').value = c.progress.target; pct();
+    $('goalTitle').value = c.goal.title; $('progEnabled').checked = !!c.progress.enabled; $('raised').value = fmt(c.progress.raised); $('target').value = fmt(c.progress.target); pct();
     var s = $('sections'); s.innerHTML = '';
     c.sections.forEach(function (sec, i) {
       var f = h('fieldset'); f.appendChild(h('legend', {}, 'متن ' + (i + 1)));
@@ -101,7 +121,7 @@ button:disabled { opacity:.5; cursor:wait; }
   function collect() {
     return {
       goal: { title: $('goalTitle').value.trim() },
-      progress: { enabled: $('progEnabled').checked, mode: 'manual', raised: Math.max(0, +$('raised').value || 0), target: Math.max(1, +$('target').value || 1), endpoint: cur.progress.endpoint, refreshSeconds: cur.progress.refreshSeconds },
+      progress: { enabled: $('progEnabled').checked, mode: 'manual', raised: Math.max(0, num($('raised').value)), target: Math.max(1, num($('target').value) || 1), endpoint: cur.progress.endpoint, refreshSeconds: cur.progress.refreshSeconds },
       sections: [].map.call(document.querySelectorAll('#sections fieldset'), function (f) {
         return { heading: f.querySelector('.sh').value.trim(), paragraphs: f.querySelector('.sp').value.split(/\n\s*\n/).map(function (p) { return p.replace(/\s*\n\s*/g, ' ').trim(); }).filter(Boolean) };
       }),
@@ -110,6 +130,7 @@ button:disabled { opacity:.5; cursor:wait; }
         links: rows($('flinks')).map(function (r) { return { label: val(r, 'label').value.trim(), href: val(r, 'href').value.trim(), enabled: val(r, 'enabled').checked }; }) }
     };
   }
+  moneyInput($('raised')); moneyInput($('target'));
   $('raised').addEventListener('input', pct); $('target').addEventListener('input', pct);
 
   fetch(URL_, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) { cur = merge(D, j && j.config); fill(cur); msg('تنظیمات فعلی بارگذاری شد.', 'ok'); })
