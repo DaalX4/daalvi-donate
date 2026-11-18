@@ -19,10 +19,17 @@
     var f = fetch(REMOTE, { cache: 'no-store' }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) { return j && j.config ? j.config : null; }).catch(function () { return null; });
     return Promise.race([f, t]).then(function (cfg) { return cfg ? merge(DEFAULTS, cfg) : DEFAULTS; });
   }
-  loadRemote().then(start);
+  /* English: a fixed overlay of the visible texts (links, amounts, progress and everything else stay as they are) */
+  function toEN(C) {
+    var E = window.DONATE_EN; if (!E) return C;
+    C.goal.title = E.title; C.sections = E.sections; C.supporters.heading = E.supporters.heading; C.supporters.note = E.supporters.note; C.reach.heading = E.reach;
+    C.donate.forEach(function (d) { if (E.donate[d.id]) d.label = E.donate[d.id]; });
+    return C;
+  }
+  loadRemote().then(function (C) { return window.DLANG === 'en' ? toEN(C) : C; }).then(start);
 
   function start(C) {
-  var faNum = new Intl.NumberFormat('fa-IR', { maximumFractionDigits: 0 });
+  var faNum = new Intl.NumberFormat(window.DLANG === 'en' ? 'en-US' : 'fa-IR', { maximumFractionDigits: 0 });
 
   function el(tag, cls, text) { var e = document.createElement(tag); if (cls) e.className = cls; if (text != null) e.textContent = text; return e; }
 
@@ -86,7 +93,7 @@
   /* ---- top supporters: empty state, three small outlined slots (no names, no amounts) ---- */
   (function () {
     var S = C.supporters || {}, box = $('supporters'); if (!box) return;
-    var FA = ['۱', '۲', '۳', '۴', '۵'], n = Math.max(1, Math.min(5, S.slots || 3));
+    var FA = window.DLANG === 'en' ? ['1', '2', '3', '4', '5'] : ['۱', '۲', '۳', '۴', '۵'], n = Math.max(1, Math.min(5, S.slots || 3));
     box.appendChild(el('h2', 'sup__h', S.heading || '')).id = 'supH';
     var ol = el('ol', 'slots');
     for (var i = 0; i < n; i++) { var li = el('li', 'slot'); li.innerHTML = ('<span class="slot__n">' + FA[i] + '</span><span class="slot__line" aria-hidden="true"></span>' + (i === 0 ? '<svg class="slot__crown" viewBox="0 0 40 22" aria-hidden="true" focusable="false"><path d="M4 19c8 1.2 24 1.2 32 0M5 18.5L3.6 6.5l8.8 6.6L20 3l7.6 10.1 8.8-6.6L35 18.5"/></svg>' : '')); ol.appendChild(li); }
@@ -154,8 +161,8 @@
     var shown = faNum.format(Math.round(p * 10) / 10);
     pctEl.innerHTML = '';
     pctEl.appendChild(document.createTextNode(shown));
-    pctEl.appendChild(el('span', 'goal__sign', '٪'));
-    oval.setAttribute('aria-label', shown + ' درصد');
+    pctEl.appendChild(el('span', 'goal__sign', window.DLANG === 'en' ? '%' : '٪'));
+    oval.setAttribute('aria-label', shown + (window.DLANG === 'en' ? ' percent' : ' درصد'));
     oval.classList.remove('is-empty'); oval.classList.add('is-live');
   }
   function renderEmpty() {

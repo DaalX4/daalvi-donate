@@ -173,3 +173,16 @@ html.ent-go .support__icon { animation: eIcon .7s cubic-bezier(.22,.7,.2,1) calc
   html.ent-pre .goal__title, html.ent-pre .goal__oval, html.ent-pre .support__list li, html.ent-pre .supporters, html.ent-pre .sec__h, html.ent-pre .sec__body p, html.ent-pre .sitenav__list, html.ent-pre .foot, html.ent-pre .support__icon { opacity: 1; }
   html.ent-go * { animation: none !important; }
 }
+
+/* language switch (English | فارسی) */
+.langbar { display: flex; align-items: center; gap: 1rem; padding: .7rem var(--gutter) .1rem; direction: ltr; }
+.langbar::before, .langbar::after { content: ""; flex: 1; height: 1px; background: rgba(16,35,26,.18); }
+.langsw { display: inline-flex; align-items: center; border: 1.5px solid var(--edge); border-radius: 99px; padding: 2px; gap: 2px; }
+.langsw a { font: 500 .82rem/1 'Vazirmatn', sans-serif; color: var(--edge); padding: .6rem 1.05rem; min-height: 34px; box-sizing: border-box; display: inline-flex; align-items: center; border-radius: 99px; text-decoration: none; letter-spacing: .02em; }
+.langsw a.on { background: var(--edge); color: var(--paper); }
+.langsw a:not(.on):hover, .langsw a:focus-visible { background: rgba(22,52,34,.1); outline: none; }
+html.en { --f-display: Georgia, 'Times New Roman', serif; }
+html.en .goalcol, html.en .storycol, html.en .foot__reach { direction: ltr; }
+html.en .goal__title, html.en .sec__h, html.en .goal__pct, html.en .slot__n, html.en .sup__h { letter-spacing: 0; word-spacing: 0; font-variant-numeric: lining-nums; }
+html.en .goal__title { line-height: 1.2; }
+html.en .sec__body p { line-height: 1.8; }
