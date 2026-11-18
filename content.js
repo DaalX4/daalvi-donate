@@ -91,18 +91,18 @@ window.DONATE_CONTENT = {
 
 /* English overlay (shown when the visitor picks English). Texts only; links, amounts and progress come from the settings above. */
 window.DONATE_EN = {
-  title: 'Giving Back My Family’s Love',
+  title: 'For My Family',
   sections: [
-    { heading: 'Why does this goal matter to me?', paragraphs: [
-      'Until today, my family has been my greatest support through the hardest days of my life. Again and again they took my hand and never let me fall. Through both of my migrations, with all the hardship they carried, they were always by my side.',
-      'Now I’d love to dedicate this goal to them — to people who, even these days, are working hard themselves to build a better life.',
-      'I want to lighten some of the weight on their shoulders, from moving costs to the debts still ahead of them. More than anything, I’d like to give back a little of the peace of mind they gave me through all these years.',
-      'I know this number could never repay all their effort and love. But to me, it’s a small step toward adding a little more love and calm, bit by bit, to their life and their future.' ] },
-    { heading: 'A little about me, and the path I love', paragraphs: [
-      'One of my biggest concerns has always been how to keep my artistic path going and keep it alive.',
-      'I think many of us have, at least once, thought about setting aside what we truly love and going after work we may have no interest in at all, simply because it pays more.',
-      'In a world where art and the effort of artists aren’t always seen the way they should be, I still want to keep this small glimmer of light burning.',
-      'Your support isn’t only financial help; it gives me hope that I can keep going on this path, and not give up the work I love so deeply and have worked toward for years.' ] }
+    { heading: 'Why This Means So Much to Me', paragraphs: [
+      'My family has been my biggest support through the hard days of my life. Again and again they took my hand and wouldn’t let me fall. Through both times I had to start over in a new country, they were always right there beside me.',
+      'Now I’d like to dedicate this goal to them: to people who are still working hard themselves, trying to build a better life.',
+      'I want to take some of the weight off their shoulders, from moving costs to the debts they’re still dealing with. More than anything, I’d like to give back a little of the peace of mind they gave me all these years.',
+      'I know this number could never repay all their effort and love. But for me, it’s a small step toward adding a little more love and calm, bit by bit, to their lives and their future.' ] },
+    { heading: 'The Path I Love', paragraphs: [
+      'One of my biggest worries has always been how to keep my art going and keep it alive.',
+      'I think many of us have, at least once, thought about putting aside what we really love and taking a job we may not care about at all, just because it pays more.',
+      'In a world where art, and the work artists put in, doesn’t always get seen the way it should, I still want to keep this small light burning.',
+      'Your support isn’t just financial help. It gives me hope that I can keep going on this path, and not give up something I love dearly and have worked at for years.' ] }
   ],
   donate: { usd: 'Support in USD', toman: 'Support in Toman' },
   supporters: { heading: 'Top Supporters', note: 'No top supporter has been recorded yet.' },
