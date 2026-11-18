@@ -15,7 +15,7 @@
 <link rel="preload" href="fonts/DigiSarve.ttf" as="font" type="font/ttf" crossorigin>
 <link rel="preload" href="fonts/Vazirmatn-Variable.ttf" as="font" type="font/ttf" crossorigin>
 <script>(function(){var h=document.documentElement;if(!(window.matchMedia&&matchMedia('(prefers-reduced-motion: reduce)').matches)){h.classList.add('ent-pre');setTimeout(function(){h.classList.remove("ent-pre");},9000);}})();</script>
-<link rel="stylesheet" href="donate.css?v=1794300003">
+<link rel="stylesheet" href="donate.css?v=1794300004">
 </head>
 <body>
 <a class="skip" href="#story">پرش به متن</a>
@@ -52,9 +52,10 @@
 <footer class="foot" id="foot"></footer>
 
 <noscript><p class="nojs">برای دیدن این صفحه جاوااسکریپت لازم است.</p></noscript>
-<script src="content.js?v=1794300003"></script>
-<script src="goal-model.js?v=1794300003"></script>
-<script src="donate.js?v=1794300003"></script>
+<script src="content.js?v=1794300004"></script>
+<script src="goal-model.js?v=1794300004"></script>
+<script src="donate.js?v=1794300004"></script>
+<script>/* Inside the daalvi.com embed the frame is as tall as the page, so CSS sticky cannot work. The frame asks the browser how much of it has scrolled above the visible window (works across origins) and moves the header down by that amount. */(function(){try{if(window.top===window.self)return}catch(e){}if(!window.IntersectionObserver)return;var bar=document.querySelector(".topstick"),b=document.body,th=[],i;for(i=0;i<=2000;i++)th.push(i/2000);new IntersectionObserver(function(es){var e=es[es.length-1],r=e.intersectionRect,c=e.boundingClientRect,o=0;if(r.height>0)o=Math.max(0,Math.min(r.top-c.top,c.height-bar.offsetHeight-8));bar.style.transform="translate3d(0,"+o+"px,0)"},{threshold:th}).observe(b)})();</script>
 <script>/* admin panel: Ctrl+Shift+E (same shortcut as Nur). The panel code is downloaded only then; visitors never get it. Inside the daalvi.com embed (an iframe) Chrome blocks private-network requests, so there the shortcut opens this same page as a top-level tab with #admin, where the panel opens itself. */(function(){var on=false;function framed(){try{return window.top!==window.self}catch(e){return true}}function load(cb){if(window.DonatePanel){cb();return}if(on)return;on=true;var s=document.createElement("script");s.src="panel.js?v=1";s.onload=cb;s.onerror=function(){on=false};document.head.appendChild(s)}document.addEventListener("keydown",function(e){if(e.ctrlKey&&e.shiftKey&&!e.altKey&&!e.metaKey&&(e.code==="KeyE"||e.key==="E"||e.key==="e")){e.preventDefault();if(framed()){window.open("https://daalx4.github.io/daalvi-donate/#admin","_blank","noopener");return}if(window.DonatePanel){window.DonatePanel.toggle();return}load(function(){window.DonatePanel.open()})}});if(!framed()&&location.hash==="#admin"){try{history.replaceState(null,"",location.pathname+location.search)}catch(e){}load(function(){window.DonatePanel.open()})}})();</script>
 </body>
 </html>
